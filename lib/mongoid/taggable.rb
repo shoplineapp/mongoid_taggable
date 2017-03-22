@@ -95,7 +95,7 @@ module Mongoid::Taggable
     end
 
     def tags_index_collection
-      @tags_index_collection ||= Moped::Collection.new(self.collection.database, tags_index_collection_name)
+      @tags_index_collection ||= Mongo::Collection.new(self.collection.database, tags_index_collection_name)
     end
 
     def save_tags_index!
@@ -110,24 +110,16 @@ module Mongoid::Taggable
       # http://docs.mongodb.org/manual/core/map-reduce/ suggests using the aggregation pipeline
       total_docs = self.count.to_f
 
-      tags_index_pipeline = [
+      self.unscoped.collection.aggregate([
         {"$unwind" => "$tags_array"},
-        {"$group" => {_id: "$tags_array", matches: {"$sum" => 1} } },
+        {"$group" => {_id: "$tags_array", matches: {"$sum" => 1}} },
         {"$project" => {
+           tags_array: 1,
            matches: 1,
-           uniqueness: {"$subtract" => [1, {"$divide" => ["$matches", total_docs]} ] } } },
-        {"$sort" => {_id: 1}}
-      ]
-
-      # It would be good to use the "$out" pipeline step, to save this aggregation
-      # to a collection (instead of array), but this is only available in unreleased Mongo 2.6
-
-      results = self.unscoped.collection.aggregate(*tags_index_pipeline)
-
-
-      results.each do |r|
-        tags_index_collection.find(_id: r["_id"]).upsert(r)
-      end
+           uniqueness: {"$subtract" => [1, {"$divide" => ["$matches", total_docs]} ] }
+         } },
+        {"$out" => tags_index_collection_name}
+      ]).to_a
 
       @need_to_index_tags = false
     end
@@ -152,7 +144,7 @@ module Mongoid::Taggable
                 related_pipeline.insert(0, *pipeline_injection)
               : related_pipeline.insert(0, pipeline_injection) )
 
-      related = self.collection.aggregate(*related_pipeline)
+      related = self.collection.aggregate(related_pipeline)
 
       ordering = Hash.new(0)
 

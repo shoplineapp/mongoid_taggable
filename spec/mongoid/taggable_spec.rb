@@ -33,43 +33,43 @@ describe Mongoid::Taggable do
     context "by tagged_with" do
       let(:models){MyModel.tagged_with('interesting')}
       it "locates tagged objects" do
-        models.include?(model).should be_true
+        models.include?(model).should be_truthy
       end
     end
     context "by tagged_with_all using an array" do
       let(:models){MyModel.tagged_with_all(['interesting', 'good'])}
       it "locates tagged objects" do
-        models.include?(model).should be_true
+        models.include?(model).should be_truthy
       end
     end
     context "by tagged_with_all using strings" do
       let(:models){MyModel.tagged_with_all('interesting', 'good')}
       it "locates tagged objects" do
-        models.include?(model).should be_true
+        models.include?(model).should be_truthy
       end
     end
     context "by tagged_with_all when tag not included" do
       let(:models){MyModel.tagged_with_all('interesting', 'good', 'mcdonalds')}
       it "locates tagged objects" do
-        models.include?(model).should be_false
+        models.include?(model).should be_falsey
       end
     end
     context "by tagged_with_any using an array" do
       let(:models){MyModel.tagged_with_any(['interesting', 'mcdonalds'])}
       it "locates tagged objects" do
-        models.include?(model).should be_true
+        models.include?(model).should be_truthy
       end
     end
     context "by tagged_with_any using strings" do
       let(:models){MyModel.tagged_with_any('interesting', 'mcdonalds')}
       it "locates tagged objects" do
-        models.include?(model).should be_true
+        models.include?(model).should be_truthy
       end
     end
     context "by tagged_with_any when tag not included" do
       let(:models){MyModel.tagged_with_any('hardees', 'wendys', 'mcdonalds')}
       it "locates tagged objects" do
-        models.include?(model).should be_false
+        models.include?(model).should be_falsey
       end
     end
   end
@@ -142,7 +142,7 @@ describe Mongoid::Taggable do
     end
 
     it "should generate the index collection model based on model" do
-      MyModel.tags_index_collection.should be_a Moped::Collection
+      MyModel.tags_index_collection.should be_a Mongo::Collection
     end
 
     context "retrieving index" do
@@ -241,8 +241,8 @@ describe Mongoid::Taggable do
       related = MyModel.find_related([@george, @ringo])
       related.should have_at_least(1).items
       related[0].should == @someone_else  #  5 matches
-      related.include?(@george).should be_false
-      related.include?(@ringo).should be_false
+      related.include?(@george).should be_falsey
+      related.include?(@ringo).should be_falsey
     end
 
     it 'for multiple items as input, it should order based on tag matches' do

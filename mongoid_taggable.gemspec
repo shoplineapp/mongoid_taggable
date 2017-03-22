@@ -4,13 +4,13 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |g|
   g.name        = 'mongoid_taggable'
-  g.version     = '1.1.4'
-  g.date        = '2014-03-10'
+  g.version     = '1.1.5'
+  g.date        = '2016-03-22'
   g.description = %q{Mongoid Taggable provides some helpers to create taggable documents.}
   g.summary     = %q{Mongoid taggable behaviour}
-  g.authors     = ['Wilker Lucio', 'Kris Kowalik', 'Adam St. John', 'Caleb Clark']
-  g.email       = ['cclark@mobilizationlabs.com']
-  g.homepage    = 'http://github.com/wilkerlucio/mongoid_taggable'
+  g.authors     = ['Wilker Lucio', 'Kris Kowalik', 'Adam St. John', 'Caleb Clark', 'Thomas R. Koll']
+  g.email       = ['tomk32@tomk32.de']
+  g.homepage    = 'http://github.com/tomk32/mongoid_taggable'
 
   g.extra_rdoc_files = %w(LICENSE README.textile)
 
@@ -19,5 +19,5 @@ Gem::Specification.new do |g|
   g.require_paths = ['lib']
 
   g.add_runtime_dependency 'rake', '>= 0'
-  g.add_runtime_dependency 'mongoid', '>= 3'
+  g.add_runtime_dependency 'mongoid', '~> 5'
 end

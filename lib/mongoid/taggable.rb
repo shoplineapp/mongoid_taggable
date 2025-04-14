@@ -22,7 +22,9 @@ module Mongoid::Taggable
 
     # add callback to save tags index
     after_save do |document|
-      document.class.save_tags_index! if document.tags_array_changed?
+      # Use previously_changed? as Mongoid 8.x+ updates attributes before after_save so changed? returns false here 
+      # see: https://www.mongodb.com/docs/mongoid/8.1/release-notes/mongoid-8.0/#changeable-module-behavior-made-compatible-with-activemodel--dirty
+      document.class.save_tags_index! if document.tags_array_previously_changed?
     end
 
     # enable indexing as default
